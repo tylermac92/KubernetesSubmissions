@@ -1,0 +1,8 @@
+# syntax=docker/dockerfile:1
+FROM python:3.12-slim
+WORKDIR /app
+COPY log_output_writer.py /app/
+ENV LOG_PATH=/data/log.txt
+ENV INTERVAL=5
+CMD ["python", "log_output_writer.py"]
+

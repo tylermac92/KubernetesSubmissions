@@ -14,11 +14,27 @@ spec:
       labels:
         app: log-output
     spec:
+      volumes:
+        - name: shared-data
+          emptyDir: {}
       containers:
-        - name: log-output
-          image: log_output:latest
+        - name: writer
+          image: log-output-writer:latest
           imagePullPolicy: IfNotPresent
           env:
+            - name: LOG_PATH
+              value: /data/log.txt
+            - name: INTERVAL
+              value: "5"
+          volumeMounts:
+            - name: shared-data
+              mountPath: /data
+        - name: reader
+          image: log-output-reader:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: LOG_PATH
+              value: /data/log.txt
             - name: PORT
               value: "8000"
           ports:
@@ -36,3 +52,6 @@ spec:
               port: http
             initialDelaySeconds: 5
             periodSeconds: 10
+          volumeMounts:
+            - name: shared-data
+              mountPath: /data
